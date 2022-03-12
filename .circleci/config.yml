@@ -1,26 +1,13 @@
 version: 2.1
 orbs:
     hello: circleci/hello-build@0.0.5
-jobs:
-    test:
-        command:
-            -   echo " hello/hello-build " 
-    publish-master:
-        steps:
-        - checkout 
-        run: 
-          command:
-            -  echo " publishing master "
- workflows:
-    version: 2
-    test-latest:
-        jobs:
-        - test
-        - publish-master:
-            requires:
-            - test
-            filters:
-              branches:
-               only: dushyant
-            
-        
+commands:
+  sayhello:
+    description: "A very simple command for demonstration purposes"
+    parameters:
+      to:
+        type: string
+        default: "Hello World"
+    steps:
+      - run: echo << parameters.to >>
+
