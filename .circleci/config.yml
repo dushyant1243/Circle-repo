@@ -1,7 +1,26 @@
 version: 2.1
 orbs:
     hello: circleci/hello-build@0.0.5
-workflows:
-    "Hello Workflow":
+jobs:
+    test:
+        command:
+            -   echo " hello/hello-build " 
+    publish-master:
+        steps:
+        - checkout 
+        run: 
+          command:
+            -  echo " publishing master "
+ workflows:
+    version: 2
+    test-latest:
         jobs:
-          - hello/hello-build
+        - test
+        - publish-master:
+            requires:
+            - test
+            filters:
+              branches:
+               only: dushyant
+            
+        
