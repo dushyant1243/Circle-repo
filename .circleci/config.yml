@@ -1,14 +1,43 @@
 version: 2.1
-executors:
-  my-executor:
+
+jobs:
+  build:
     docker:
-      - image: cimg/ruby:3.0.3-browsers
+      - image: buildpack-deps:trusty # primary container
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment:
+          ENV: CI
+
+      - image: mongo:2.6.8
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        command: [--smallfiles]
+
+      - image: postgres:9.4.1
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment:
+          POSTGRES_USER: root
+
+      - image: redis@sha256:54057dd7e125ca41afe526a877e8bd35ec2cdd33b9217e022ed37bdcf7d09673
         auth:
           username: mydockerhub-user
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
 
-jobs:
-  my-job:
-    executor: my-executor
-    steps:
-      - run: echo outside the executor
+      - image: acme-private/private-image:321
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+
+workflows:
+  version: 2
+  test-jobs:
+    jobs:
+    - build:
+        filters:
+          branches:
+            only: dushyant
